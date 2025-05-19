@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Start Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 2rem;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #000000, #1a1a1a);
+      color: #f0c93c;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    h1, .greeting, .datetime, .weather {
+      color: #f0c93c;
+      transition: color 0.3s;
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    h1:hover, .greeting:hover, .datetime:hover, .weather:hover {
+      color: #ffe488;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+    .category {
+      display: none;
+      width: 100%;
+      max-width: 1000px;
+      padding: 1.5rem 2rem;
+      margin-top: 1.5rem;
+      background: linear-gradient(135deg, #111111, #1a1a1a);
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2);
+      animation: fadeIn 0.4s ease-in-out;
+    }
+    .category.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .card {
+      background: #111111;
+      border: 1px solid #f0c93c44;
+      border-radius: 1.25rem;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+      animation: glowBorder 3s ease-in-out infinite alternate;
+    }
+    .card:hover {
+      transform: translateY(-5px) scale(1.05);
+      background: #222222;
+      box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+    }
+    .card i {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      background-image: linear-gradient(45deg, #f0c93c, #eac200, #f0c93c);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 2s linear infinite;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      text-align: center;
+      padding-bottom: 2rem;
+      width: 100%;
+    }
+    .search-bar {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 0 1rem;
+    }
+    .search-bar form {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      justify-content: center;
+    }
+    .search-bar input[type="text"] {
+      width: 100%;
+      padding: 1rem 7rem 1rem 2.5rem;
+      font-size: 1.1rem;
+      border-radius: 999px;
+      border: 1px solid #f0c93c33;
+      background: #111111;
+      color: #f0c93c;
+      box-shadow: 0 2px 6px rgba(255, 215, 0, 0.2);
+      outline: none;
+    }
+    .search-bar input::placeholder {
+      color: #f0c93c99;
+    }
+    .search-icon, .mic-icon, .lens-icon {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      color: #f0c93c;
+    }
+    .search-icon {
+      left: 15px;
+    }
+    .mic-icon {
+      right: 45px;
+    }
+    .lens-icon {
+      right: 15px;
+    }
+    .circle-nav-container {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #111111;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+      max-width: 90vw;
+      width: fit-content;
+    }
+    .circle-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .circle-btn {
+      background: #1a1a1a;
+      border: 2px solid #f0c93c44;
+      border-radius: 12px;
+      padding: 0.8rem 1.6rem;
+      font-size: 1rem;
+      color: #f0c93c;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      animation: glowBorder 4s ease-in-out infinite alternate;
+    }
+    .circle-btn:hover, .circle-btn.active-tab {
+      background: #2e0c47;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(186, 85, 211, 0.6);
+      color: #ffebff;
+    }
+    @keyframes shine {
+      to {
+        background-position: -200% center;
+      }
+    }
+    @keyframes glowBorder {
+      0% {
+        box-shadow: 0 0 5px rgba(186, 85, 211, 0.3), 0 0 10px rgba(186, 85, 211, 0.3);
+      }
+      100% {
+        box-shadow: 0 0 15px rgba(186, 85, 211, 0.6), 0 0 25px rgba(186, 85, 211, 0.6);
+      }
+    }
+    @keyframes shimmerBG {
+      0% { background-position: -500% 0; }
+      100% { background-position: 500% 0; }
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(270deg, rgba(186,85,211,0.03), rgba(186,85,211,0.07), rgba(186,85,211,0.03));
+      background-size: 400% 100%;
+      z-index: -1;
+      animation: shimmerBG 20s linear infinite;
+      pointer-events: none;
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      h1, .greeting, .datetime, .weather {
+        font-size: 2rem;
+      }
+      .search-bar input[type="text"] {
+        font-size: 1rem;
+        padding: 0.8rem 2.5rem;
+      }
+      .circle-btn {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
+      }
+      .card i {
+        font-size: 1.5rem;
+      }
+      .card {
+        padding: 1rem 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+  <div id="header" class="header">
+    <div class="greeting">👋 Hello Sridhar</div>
+    <div id="datetime" class="datetime">Loading date...</div>
+    <div id="weather" class="weather">Loading weather...</div>
+    <div class="search-bar">
+        <form action="https://www.google.com/search" method="GET" target="_blank">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" name="q" placeholder="Search Google or type a URL" />
+        </form>
+    </div>
+  </div>
+
+
+  <div class="circle-nav-container">
+    <div class="circle-nav">
+      <div class="circle-btn" onclick="toggleCategory('ai')">AI</div>
+      <div class="circle-btn" onclick="toggleCategory('career')">Career</div>
+      <div class="circle-btn" onclick="toggleCategory('email')">Email</div>
+      <div class="circle-btn" onclick="toggleCategory('google')">Google</div>
+      <div class="circle-btn" onclick="toggleCategory('media')">Media</div>
+      <div class="circle-btn" onclick="toggleCategory('shopping')">Shop</div>
+    </div>
+  </div>
+
+  <!-- Existing categories follow here -->
+
+  <div class="category" id="ai">
+    <h1>🧠 AI & Productivity</h1>
+    <div class="grid">
+      <a href="https://chat.openai.com" target="_blank"><div class="card"><i class="fas fa-robot"></i><div>ChatGPT</div></div></a>
+      <a href="https://www.cursor.so" target="_blank"><div class="card"><i class="fas fa-code"></i><div>Cursor AI</div></div></a>
+      <a href="https://chat.deepseek.com" target="_blank"><div class="card"><i class="fas fa-brain"></i><div>DeepSeek</div></div></a>
+      <a href="https://chat.qwen.ai/" target="_blank"><div class="card"><i class="fas fa-lightbulb"></i><div>Qwen</div></div></a>
+      <a href="https://www.ilovepdf.com" target="_blank"><div class="card"><i class="fas fa-heart"></i><div>iLovePDF</div></div></a>
+    </div>
+  </div>
+
+  <div class="category" id="email">
+    <h1>📧 Email & Accounts</h1>
+    <div class="grid">
+      <a href="https://outlook.live.com" target="_blank"><div class="card"><i class="fas fa-envelope"></i><div>Outlook</div></div></a>
+      <a href="https://mail.yahoo.com" target="_blank"><div class="card"><i class="fab fa-yahoo"></i><div>Yahoo</div></div></a>
+      <a href="https://mail.google.com" target="_blank"><div class="card"><i class="fab fa-google"></i><div>Gmail</div></div></a>
+      <a href="https://account.microsoft.com" target="_blank"><div class="card"><i class="fas fa-user-circle"></i><div>Microsoft</div></div></a>
+    </div>
+  </div>
+
+  <div class="category" id="google">
+    <h1><img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google logo" style="height: 1.5em; vertical-align: middle;"> Apps</h1>
+    <div class="grid">
+      <a href="https://drive.google.com" target="_blank"><div class="card"><i class="fas fa-hdd"></i><div>Drive</div></div></a>
+      <a href="https://docs.google.com" target="_blank"><div class="card"><i class="fas fa-file-alt"></i><div>Docs</div></div></a>
+      <a href="https://photos.google.com" target="_blank"><div class="card"><i class="fas fa-camera"></i><div>Photos</div></div></a>
+      <a href="https://maps.google.com" target="_blank"><div class="card"><i class="fas fa-map-marker-alt"></i><div>Maps</div></div></a>
+      <a href="https://calendar.google.com" target="_blank"><div class="card"><i class="fas fa-calendar"></i><div>Calendar</div></div></a>
+    </div>
+  </div>
+
+  <div class="category" id="career">
+    <h1>💼 Career & Projects</h1>
+    <div class="grid">
+      <a href="https://www.linkedin.com" target="_blank"><div class="card"><i class="fab fa-linkedin"></i><div>LinkedIn</div></div></a>
+      <a href="https://ca.indeed.com/" target="_blank"><div class="card"><i class="fas fa-briefcase"></i><div>Indeed</div></div></a>
+      <a href="https://github.com" target="_blank"><div class="card"><i class="fab fa-github"></i><div>GitHub</div></div></a>
+      <a href="https://sridharpatel735.github.io/Portfolio/" target="_blank"><div class="card"><i class="fas fa-id-card"></i><div>Portfolio</div></div></a>
+    </div>
+  </div>
+
+  <div class="category" id="media">
+    <h1>🎮 Media & Social</h1>
+    <div class="grid">
+      <a href="https://youtube.com" target="_blank"><div class="card"><i class="fab fa-youtube"></i><div>YouTube</div></div></a>
+      <a href="https://www.instagram.com" target="_blank"><div class="card"><i class="fab fa-instagram"></i><div>Instagram</div></div></a>
+    </div>
+  </div>
+
+  <div class="category" id="shopping">
+    <h1>🛒 Shopping</h1>
+    <div class="grid">
+      <a href="https://www.aliexpress.com" target="_blank"><div class="card"><i class="fas fa-shopping-cart"></i><div>AliExpress</div></div></a>
+      <a href="https://www.amazon.ca" target="_blank"><div class="card"><i class="fab fa-amazon"></i><div>Amazon</div></div></a>
+      <a href="https://www.costco.ca" target="_blank"><div class="card"><i class="fas fa-store"></i><div>Costco</div></div></a>
+    </div>
+  </div>
+
+  <script>
+    // Set Date
+    const now = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('datetime').textContent = now.toLocaleDateString(undefined, options);
+    });
+  
+    // Weather (OpenWeatherMap API)
+    const API_KEY = 'd68dbd73a74787c598e69bea2f690093';
+    const getWeather = async () => {
+      try {
+        const locRes = await fetch('https://ipapi.co/json/');
+        const locData = await locRes.json();
+        const { latitude, longitude, city } = locData;
+  
+        const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`);
+        const weatherData = await weatherRes.json();
+  
+        const temp = Math.round(weatherData.main.temp);
+        const icon = weatherData.weather[0].icon;
+        const desc = weatherData.weather[0].description;
+  
+        document.getElementById('weather').innerHTML = `
+          <img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="${desc}" style="vertical-align: middle; width: 80px;">
+          ${temp}°C in ${city}
+        `;
+      } catch (err) {
+        document.getElementById('weather').textContent = 'Weather unavailable';
+      }
+    };
+    getWeather();
+  
+    const toggleCategory = (id) => {
+      document.querySelectorAll('.category').forEach(cat => {
+        cat.classList.remove('active');
+      });
+      document.querySelectorAll('.circle-btn').forEach(btn => {
+        btn.classList.remove('active-tab');
+      });
+      const target = document.getElementById(id);
+      if (target) {
+        target.classList.add('active');
+        const activeBtn = document.querySelector(`[onclick="toggleCategory('${id}')"]`);
+        if (activeBtn) activeBtn.classList.add('active-tab');
+      }
+    };
+  
+    // Optionally open default tab (like AI)
+    document.addEventListener('DOMContentLoaded', () => {
+      toggleCategory('ai');
+    });
+  </script>
+</body>
+</html>
